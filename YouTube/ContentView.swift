@@ -163,7 +163,7 @@ struct VideoCard: View {
     @State var dataModel: DataModel?
     var body: some View {
         
-        VStack {
+        VStack(alignment: .leading) {
             if let item = dataModel?.items?[index] {
                 if dataModel?.items != nil {
                     let url = URL(string: (item.snippet?.thumbnails.medium.url)!)
@@ -177,19 +177,24 @@ struct VideoCard: View {
                             RoundedRectangle(cornerRadius: 15)
                                 .stroke(Color.black, lineWidth: 1)
                         )
-                    if dataModel?.items != nil {
-                        Text((item.snippet?.title)!)
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                            .lineLimit(2)
+                        .alignmentGuide(.top) { dimension in
+                            dimension[.top]
+                        }
+                    VStack(alignment: .leading) {
+                        if dataModel?.items != nil {
+                            Text((item.snippet?.title)!)
+                                .font(.system(size: 15))
+                                .foregroundColor(.primary)
+                                .lineLimit(2)
+                        }
+                        
+                        if dataModel?.items != nil {
+                            Text("\((item.snippet?.channelTitle)!) • 497K views • 4 months ago")
+                                .font(.system(size: 12))
+                                .multilineTextAlignment(.leading)
+                                .foregroundColor(.secondary)
+                        }
                     }
-                }
-                if dataModel?.items != nil {
-                    Text("\((item.snippet?.channelTitle)!) • 497K views • 4 months ago")
-                        .padding(.leading, 5)
-                        .font(.subheadline)
-                        .multilineTextAlignment(.leading)
-                        .foregroundColor(.secondary)
                 }
             }
         }
@@ -225,6 +230,7 @@ struct ImageView: View {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
+                .cornerRadius(10)
         }
         else {
             Image("apple")
