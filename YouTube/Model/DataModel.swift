@@ -26,4 +26,14 @@ class SnippetModel: Decodable {
     var channelId: String
     var title: String
     var description: String
+    var channelTitle:String
+    var thumbnails: ThumbnailModel
+}
+
+class ThumbnailModel: Decodable {
+    var medium : MediumModel
+}
+
+class MediumModel: Decodable {
+    var url: String
 }

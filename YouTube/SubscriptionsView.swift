@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SubscriptionsView: View {
+    @StateObject var viewModel = ViewModel()
     var body: some View {
         VStack {
             HStack {
@@ -107,10 +108,15 @@ struct SubscriptionsView: View {
             .frame(height: 30)
             
             ScrollView {
-                ForEach(1..<5) { index in
-                    VideoCard()
+                if let count = viewModel.dataModel?.items?.count {
+                    ForEach(0..<count) { index in
+                        VideoCard(index: index, dataModel: self.viewModel.dataModel)
+                    }
                 }
             }
+        }
+        .onAppear {
+            viewModel.getList()
         }
     }
 }
