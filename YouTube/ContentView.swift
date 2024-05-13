@@ -7,6 +7,7 @@
 
 import SwiftUI
 import WebKit
+import youtube_ios_player_helper
 
 var optionsArr = ["All", "Gaming", "Music", "Science"]
 
@@ -150,8 +151,7 @@ struct HomeView: View {
                 }
             }
             else {
-                VideoPlayerWebView(videoID: (viewModel.dataModel?.items?[self.index].id.videoId)!)
-                    .edgesIgnoringSafeArea(.all)
+                YouTubePlayerView(videoID: (viewModel.dataModel?.items?[self.index].id.videoId)!)
             }
         }
     }
@@ -206,18 +206,54 @@ struct VideoCard: View {
     }
 }
 
-struct VideoPlayerWebView: UIViewRepresentable {
-    var videoID: String
+//struct VideoPlayerWebView: UIViewRepresentable {
+//    var videoID: String
+//
+//    func makeUIView(context: Context) -> some UIView {
+//        let webView = WKWebView()
+//        if let url = URL(string: "https://www.youtube.com/embed/\(videoID)") {
+//            webView.load(URLRequest(url: url))
+//        }
+//        return webView
+//    }
+//
+//    func updateUIView(_ uiView: UIViewType, context: Context) {
+//        // update code
+//    }
+//}
+
+struct YouTubePlayerView: UIViewControllerRepresentable {
+    let videoID: String
+    @Environment(\.presentationMode) var presentationMode
     
-    func makeUIView(context: Context) -> some UIView {
-        let webView = WKWebView()
-        if let url = URL(string: "https://www.youtube.com/embed/\(videoID)") {
-            webView.load(URLRequest(url: url))
+    func makeUIViewController(context: Context) -> some UIViewController {
+        let playerViewController = UIViewController()
+        let playerView = YTPlayerView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 300))
+        playerView.load(withVideoId: videoID)
+        playerViewController.view.addSubview(playerView)
+        
+        /*
+        let backButton = Button("Back") {
+            presentationMode.wrappedValue.dismiss()
         }
-        return webView
+            .frame(width: 25, height: 25)
+            .padding()
+            .background(Color.white)
+            .foregroundColor(Color.black)
+            .cornerRadius(5)
+           // .offset(x: 20, y: -20)
+        
+        let hostingController = UIHostingController(rootView: backButton)
+        playerViewController.addChild(hostingController)
+        playerViewController.view.addSubview(hostingController.view)
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([hostingController.view.topAnchor.constraint(equalTo: playerViewController.view.safeAreaLayoutGuide.topAnchor, constant: 20),
+                                     hostingController.view.leadingAnchor.constraint(equalTo: playerViewController.view.safeAreaLayoutGuide.leadingAnchor, constant: 20)                 ])
+        */
+        return playerViewController
     }
     
-    func updateUIView(_ uiView: UIViewType, context: Context) {
+    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
         // update code
     }
 }
