@@ -43,6 +43,7 @@ struct HomeView: View {
     @State private var index = 0
     @StateObject var viewModel = ViewModel()
     @State private var isPlaying = false
+    @State private var isWebViewOpen = false
     var body: some View {
         NavigationView {
             if isPlaying == false {
@@ -140,7 +141,7 @@ struct HomeView: View {
                                 VideoCard(index: index, dataModel: self.viewModel.dataModel)
                             }
                             .onTapGesture {
-                                isPlaying = true
+                                isPlaying.toggle()
                                 index = index
                             }
                         }
@@ -151,7 +152,8 @@ struct HomeView: View {
                 }
             }
             else {
-                YouTubePlayerView(videoID: (viewModel.dataModel?.items?[self.index].id.videoId)!)
+                YouTubePlayerView(videoID: (viewModel.dataModel?.items?[self.index].id.videoId)!, isPlaying: $isPlaying)
+                    .padding(.top, 20)
             }
         }
     }
@@ -224,7 +226,7 @@ struct VideoCard: View {
 
 struct YouTubePlayerView: UIViewControllerRepresentable {
     let videoID: String
-    @Environment(\.presentationMode) var presentationMode
+    @Binding var isPlaying: Bool
     
     func makeUIViewController(context: Context) -> some UIViewController {
         let playerViewController = UIViewController()
@@ -232,24 +234,25 @@ struct YouTubePlayerView: UIViewControllerRepresentable {
         playerView.load(withVideoId: videoID)
         playerViewController.view.addSubview(playerView)
         
-        /*
-        let backButton = Button("Back") {
-            presentationMode.wrappedValue.dismiss()
+        
+        let backButton = Button(action: {
+            isPlaying.toggle()
+        }) {
+            Image("back_icon")
+                .frame(width: 25, height: 25)
+                .padding()
+                .foregroundColor(Color.black)
+                .cornerRadius(5)
         }
-            .frame(width: 25, height: 25)
-            .padding()
-            .background(Color.white)
-            .foregroundColor(Color.black)
-            .cornerRadius(5)
-           // .offset(x: 20, y: -20)
         
         let hostingController = UIHostingController(rootView: backButton)
         playerViewController.addChild(hostingController)
         playerViewController.view.addSubview(hostingController.view)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([hostingController.view.topAnchor.constraint(equalTo: playerViewController.view.safeAreaLayoutGuide.topAnchor, constant: 20),
-                                     hostingController.view.leadingAnchor.constraint(equalTo: playerViewController.view.safeAreaLayoutGuide.leadingAnchor, constant: 20)                 ])
-        */
+        NSLayoutConstraint.activate([hostingController.view.topAnchor.constraint(equalTo: playerViewController.view.safeAreaLayoutGuide.topAnchor, constant: 0),
+                                     hostingController.view.leadingAnchor.constraint(equalTo: playerViewController.view.safeAreaLayoutGuide.leadingAnchor, constant: -10)
+                                    ])
+        
         return playerViewController
     }
     
